@@ -103,3 +103,54 @@ export type ExamSessionItem =
   | { kind: 'mcq'; data: ExamMcq }
   | { kind: 'function'; data: FunctionDrill }
   | { kind: 'blank'; data: Exercise }
+
+export type ExamTrack = 'beginner' | 'intermediate'
+
+export type FunctionTestCase = {
+  name: string
+  /** Python statements; student-defined names are already in scope. */
+  assertCode: string
+}
+
+/** Intermediate: write a function from scratch (no blanks). */
+export type CodingChallenge = {
+  id: string
+  examId: string
+  examTitle: string
+  title: string
+  purpose: string
+  signature: string
+  examples: FunctionExample[]
+  starterCode: string
+  tests: FunctionTestCase[]
+  hint?: string
+}
+
+/** Intermediate: write a full program; checked via files / stdout. */
+export type FullProgramChallenge = {
+  id: string
+  examId: string
+  examTitle: string
+  title: string
+  brief: string
+  goalBullets: string[]
+  starterCode: string
+  inputFiles: Record<string, string>
+  stdin?: string
+  expectedStdout?: string
+  expectedFiles?: Record<string, string>
+  hint?: string
+  rubricNotes?: string
+}
+
+export type IntermediatePack = {
+  examId: string
+  examTitle: string
+  summary: string
+  functions: CodingChallenge[]
+  fullProgram: FullProgramChallenge
+}
+
+export type IntermediateSessionItem =
+  | { kind: 'coding'; data: CodingChallenge }
+  | { kind: 'full'; data: FullProgramChallenge }

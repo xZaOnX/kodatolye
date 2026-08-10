@@ -3,6 +3,12 @@ import { getExercises, getExercisesForExam } from './data/exercises'
 import { getAllExamPacks, getExamPack } from './data/examPacks'
 import { getFunctionDrillsForExam } from './data/functionDrills'
 import {
+  countIntermediateQuestions,
+  getAllIntermediatePacks,
+  getIntermediateIdsForExam,
+  getIntermediatePack,
+} from './data/intermediateChallenges'
+import {
   getFirstLesson,
   getLessons,
   getNextLesson,
@@ -11,12 +17,18 @@ import { Home } from './components/Home'
 import { ExamPicker } from './components/ExamPicker'
 import { ExamBrief } from './components/ExamBrief'
 import { ExamSession } from './components/ExamSession'
+import { IntermediateSession } from './components/IntermediateSession'
 import { LessonView } from './components/LessonView'
 import { LangSwitch } from './components/LangSwitch'
 import { PlaygroundDock } from './components/PlaygroundDock'
 import { PythonPlayground } from './components/PythonPlayground'
 import { useLanguage } from './i18n/LanguageContext'
-import type { ExamSessionItem, Lesson } from './types'
+import type {
+  ExamSessionItem,
+  ExamTrack,
+  IntermediateSessionItem,
+  Lesson,
+} from './types'
 
 type Screen =
   | 'home'
@@ -24,6 +36,7 @@ type Screen =
   | 'exam-picker'
   | 'exam-brief'
   | 'exam-session'
+  | 'intermediate-session'
   | 'playground'
 
 export default function App() {
@@ -33,10 +46,15 @@ export default function App() {
     () => getFirstLesson('tr').id,
   )
   const [activeExamId, setActiveExamId] = useState<string | null>(null)
+  const [track, setTrack] = useState<ExamTrack>('beginner')
   const [doneLessons, setDoneLessons] = useState<string[]>([])
   const [solvedQuestionIds, setSolvedQuestionIds] = useState<string[]>([])
 
   const packs = useMemo(() => getAllExamPacks(lang), [lang])
+  const intermediatePacks = useMemo(
+    () => getAllIntermediatePacks(lang),
+    [lang],
+  )
   const lessonList = useMemo(() => getLessons(lang), [lang])
   const allExercises = useMemo(() => getExercises(lang), [lang])
 
@@ -52,33 +70,56 @@ export default function App() {
   }, [lessonList, currentLessonId])
 
   const totalQuestions = useMemo(() => {
-    return packs.reduce((n, p) => {
+    const beginner = packs.reduce((n, p) => {
       const blanks = allExercises.filter((e) => e.examId === p.examId).length
       const fns = getFunctionDrillsForExam(p.examId, lang).length
       return n + p.mcqs.length + fns + blanks
     }, 0)
+    return beginner + countIntermediateQuestions()
   }, [packs, allExercises, lang])
 
-  const progressByExam = useMemo(() => {
-    const map: Record<string, number> = {}
+  const beginnerProgress = useMemo(() => {
+    const map: Record<string, { done: number; total: number }> = {}
     for (const p of packs) {
       const ids = [
         ...p.mcqs.map((m) => m.id),
         ...getFunctionDrillsForExam(p.examId, lang).map((d) => d.id),
         ...allExercises.filter((e) => e.examId === p.examId).map((e) => e.id),
       ]
-      map[p.examId] = ids.filter((id) => solvedQuestionIds.includes(id)).length
+      map[p.examId] = {
+        done: ids.filter((id) => solvedQuestionIds.includes(id)).length,
+        total: ids.length,
+      }
     }
     return map
   }, [packs, allExercises, solvedQuestionIds, lang])
 
+  const intermediateProgress = useMemo(() => {
+    const map: Record<string, { done: number; total: number }> = {}
+    for (const p of intermediatePacks) {
+      const ids = getIntermediateIdsForExam(p.examId)
+      map[p.examId] = {
+        done: ids.filter((id) => solvedQuestionIds.includes(id)).length,
+        total: ids.length,
+      }
+    }
+    return map
+  }, [intermediatePacks, solvedQuestionIds])
+
   const activePack = activeExamId ? getExamPack(activeExamId, lang) : undefined
-  const activeBlanks = activeExamId
-    ? getExercisesForExam(activeExamId, lang)
-    : []
-  const activeFns = activeExamId
-    ? getFunctionDrillsForExam(activeExamId, lang)
-    : []
+  const activeIntermediate = activeExamId
+    ? getIntermediatePack(activeExamId, lang)
+    : undefined
+  const activeBlanks = useMemo(
+    () =>
+      activeExamId ? getExercisesForExam(activeExamId, lang) : [],
+    [activeExamId, lang],
+  )
+  const activeFns = useMemo(
+    () =>
+      activeExamId ? getFunctionDrillsForExam(activeExamId, lang) : [],
+    [activeExamId, lang],
+  )
 
   const sessionItems: ExamSessionItem[] = useMemo(() => {
     if (!activePack) return []
@@ -88,6 +129,17 @@ export default function App() {
       ...activeBlanks.map((b) => ({ kind: 'blank' as const, data: b })),
     ]
   }, [activePack, activeFns, activeBlanks])
+
+  const intermediateItems: IntermediateSessionItem[] = useMemo(() => {
+    if (!activeIntermediate) return []
+    return [
+      ...activeIntermediate.functions.map((d) => ({
+        kind: 'coding' as const,
+        data: d,
+      })),
+      { kind: 'full' as const, data: activeIntermediate.fullProgram },
+    ]
+  }, [activeIntermediate])
 
   function startBasics() {
     setCurrentLessonId(getFirstLesson(lang).id)
@@ -108,6 +160,10 @@ export default function App() {
   }
 
   function startSession() {
+    if (track === 'intermediate') {
+      setScreen('intermediate-session')
+      return
+    }
     setScreen('exam-session')
   }
 
@@ -127,6 +183,10 @@ export default function App() {
   function markSolved(id: string) {
     setSolvedQuestionIds((prev) => (prev.includes(id) ? prev : [...prev, id]))
   }
+
+  const begProg = activeExamId
+    ? (beginnerProgress[activeExamId] ?? { done: 0, total: 0 })
+    : { done: 0, total: 0 }
 
   return (
     <div className="shell">
@@ -164,26 +224,44 @@ export default function App() {
         )}
         {screen === 'exam-picker' && (
           <ExamPicker
-            packs={packs}
-            progress={progressByExam}
+            track={track}
+            onTrackChange={setTrack}
+            beginnerPacks={packs}
+            intermediatePacks={intermediatePacks}
+            beginnerProgress={beginnerProgress}
+            intermediateProgress={intermediateProgress}
             onBack={() => setScreen('home')}
             onPick={pickExam}
           />
         )}
         {screen === 'exam-brief' && activePack && (
           <ExamBrief
+            track={track}
             pack={activePack}
+            intermediatePack={activeIntermediate}
             functionCount={activeFns.length}
             blankCount={activeBlanks.length}
+            beginnerDone={begProg.done}
+            beginnerTotal={begProg.total}
             onBack={() => setScreen('exam-picker')}
             onStart={startSession}
           />
         )}
         {screen === 'exam-session' && activePack && (
           <ExamSession
-            key={`${activePack.examId}-${lang}`}
+            key={`${activePack.examId}-${lang}-beginner`}
             examTitle={activePack.examTitle}
             items={sessionItems}
+            onBack={() => setScreen('exam-brief')}
+            onItemSolved={markSolved}
+            onFinished={() => setScreen('exam-picker')}
+          />
+        )}
+        {screen === 'intermediate-session' && activeIntermediate && (
+          <IntermediateSession
+            key={`${activeIntermediate.examId}-${lang}-intermediate`}
+            examTitle={activeIntermediate.examTitle}
+            items={intermediateItems}
             onBack={() => setScreen('exam-brief')}
             onItemSolved={markSolved}
             onFinished={() => setScreen('exam-picker')}

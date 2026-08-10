@@ -14,7 +14,7 @@ const ui = {
     path2Kicker: '2 · Sınav',
     path2Title: 'Sınava çalış',
     path2Desc:
-      'Exam seç → özet → MCQ → fonksiyon amacı+yaz → boşluklar.',
+      'Beginner (iskelet) veya Intermediate (sıfırdan yaz) — istediğin track’e geç.',
     path2Meta: (exams: number, done: number, total: number) =>
       `${exams} exam · ${done}/${total} soru`,
     path3Kicker: '3 · Deneme',
@@ -75,9 +75,21 @@ const ui = {
     examPickerTitle: 'Sınava çalış',
     examPickerGoal:
       'Bir exam seç. Önce ne yapman gerektiğini oku, sonra soruları çöz.',
+    examPickerGoalBeginner:
+      'Beginner: kavram MCQ + iskeletli fonksiyon/boşluk. Temeli pekiştir.',
+    examPickerGoalIntermediate:
+      'Intermediate: scaffold yok — fonksiyonları ve tam programı sıfırdan yaz. Pyodide ile test edilir.',
     examMeta: (n: number) => `${n} exam`,
     questionsSolved: (n: number) => `${n} soru çözüldü`,
+    questionsProgress: (done: number, total: number) =>
+      `${done}/${total} soru`,
     notStarted: 'Henüz başlanmadı',
+    trackTabsAria: 'Zorluk seviyesi',
+    trackBeginner: 'Beginner',
+    trackIntermediate: 'Intermediate',
+    intermediateSoftHint:
+      'İstersen önce Beginner’ı bitir — zorunlu değil, buradan da devam edebilirsin.',
+    beginnerRecommended: 'Beginner henüz bitmedi (öneri)',
     briefPill: 'Özet',
     briefWhat: 'Ne yapman gerekiyor?',
     briefOrder: 'Bu çalışmada sıra',
@@ -85,6 +97,9 @@ const ui = {
     briefStepFn: (n: number) =>
       `${n} fonksiyon kartı — önce amacı oku, sonra yaz`,
     briefStepBlank: (n: number) => `${n} mikro boşluk (iskelet pekiştirme)`,
+    briefStepCoding: (n: number) =>
+      `${n} fonksiyon — boş editör, testlerle kontrol`,
+    briefStepFull: '1 tam program — dosya I/O / stdout karşılaştırması',
     briefTotal: (n: number) => `Toplam ${n} adım.`,
     briefMeta: (mcq: number, blank: number, total: number) =>
       `Bu çalışmada ${mcq} çoktan seçmeli + ${blank} boşluk = ${total} soru var.`,
@@ -93,6 +108,11 @@ const ui = {
     pillMcq: 'Çoktan seçmeli',
     pillFunction: 'Fonksiyon',
     pillBlank: 'Boşluk doldur',
+    pillCoding: 'Sıfırdan yaz',
+    pillFull: 'Tam program',
+    challengeInputFiles: 'Hazır girdi dosyaları',
+    codingSolved: 'Doğru. Fonksiyon testleri geçti.',
+    fullSolved: 'Doğru. Program beklenen çıktıyı üretti.',
     mcqWrong: 'Yanlış — tekrar dene.',
     blankWrong: 'Bazı boşluklar yanlış — kırmızı olanlara bak.',
     fnWritePrefix: 'Yaz:',
@@ -123,7 +143,7 @@ const ui = {
     path2Kicker: '2 · Exam',
     path2Title: 'Study for the exam',
     path2Desc:
-      'Pick an exam → brief → MCQ → function purpose+write → blanks.',
+      'Beginner (scaffolded) or Intermediate (write from scratch) — switch tracks anytime.',
     path2Meta: (exams: number, done: number, total: number) =>
       `${exams} exams · ${done}/${total} questions`,
     path3Kicker: '3 · Try',
@@ -184,9 +204,21 @@ const ui = {
     examPickerTitle: 'Study for the exam',
     examPickerGoal:
       'Pick an exam. First read what you need to do, then solve the questions.',
+    examPickerGoalBeginner:
+      'Beginner: concept MCQs + scaffolded functions/blanks. Reinforce the basics.',
+    examPickerGoalIntermediate:
+      'Intermediate: no scaffolds — write functions and a full program from scratch. Checked with Pyodide.',
     examMeta: (n: number) => `${n} exams`,
     questionsSolved: (n: number) => `${n} questions solved`,
+    questionsProgress: (done: number, total: number) =>
+      `${done}/${total} questions`,
     notStarted: 'Not started yet',
+    trackTabsAria: 'Difficulty track',
+    trackBeginner: 'Beginner',
+    trackIntermediate: 'Intermediate',
+    intermediateSoftHint:
+      'You can finish Beginner first — optional; you may continue here anytime.',
+    beginnerRecommended: 'Beginner not finished yet (suggestion)',
     briefPill: 'Brief',
     briefWhat: 'What do you need to do?',
     briefOrder: 'Session order',
@@ -194,6 +226,9 @@ const ui = {
     briefStepFn: (n: number) =>
       `${n} function cards — read the purpose, then write`,
     briefStepBlank: (n: number) => `${n} micro blanks (scaffold practice)`,
+    briefStepCoding: (n: number) =>
+      `${n} functions — empty editor, checked with tests`,
+    briefStepFull: '1 full program — file I/O / stdout comparison',
     briefTotal: (n: number) => `${n} steps total.`,
     briefMeta: (mcq: number, blank: number, total: number) =>
       `This session has ${mcq} multiple choice + ${blank} fill-in = ${total} questions.`,
@@ -202,6 +237,11 @@ const ui = {
     pillMcq: 'Multiple choice',
     pillFunction: 'Function',
     pillBlank: 'Fill in the blank',
+    pillCoding: 'Write from scratch',
+    pillFull: 'Full program',
+    challengeInputFiles: 'Provided input files',
+    codingSolved: 'Correct. Function tests passed.',
+    fullSolved: 'Correct. The program produced the expected output.',
     mcqWrong: 'Wrong — try again.',
     blankWrong: 'Some blanks are wrong — check the ones in red.',
     fnWritePrefix: 'Write:',

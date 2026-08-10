@@ -1,0 +1,68 @@
+{
+  "atomic-chess": {
+    "stdout": "White: 13\nBlack: 12\n"
+  },
+  "biodiversity": {
+    "stdout": "cod: 2\nshark: 1\neel: 1\n"
+  },
+  "chess-selo": {
+    "stdout": "ada 1546\nbob 1485\ncara 1469\n"
+  },
+  "connect-four": {
+    "stdout": ".......\n.......\n.......\n.......\n...OOO.\n...XXXX\n"
+  },
+  "consumption+production": {
+    "stdout": "6.0\n"
+  },
+  "crypto": {
+    "stdout": "2021-01-02 330.00\n"
+  },
+  "everwhen": {
+    "stdout": "yesterday\ntoday\ntomorrow\n"
+  },
+  "flights-booking": {
+    "stdout": "BOOK Ada ok\nBOOK Bob ok\nBOOK Cara fail\nCANCEL Ada ok\nBOOK Cara ok\n"
+  },
+  "freedonia": {
+    "stdout": "B\n"
+  },
+  "heating": {
+    "stdout": "2020-01: 20.0\n2020-02: 15.5\n"
+  },
+  "linmgoweave": {
+    "stdout": "ab 6\nba 4\nab 0\nxy 2\ntotal 12\n"
+  },
+  "magic-boxes": {
+    "stdout": "kiwi rejected\nbox0: apple,apple\nbox1: pear\nbox2: banana\n"
+  },
+  "misspell": {
+    "stdout": "cat: 2\ndog: 1\nbird: 1\n"
+  },
+  "munodi": {
+    "stdout": "valid\nvalid\ninvalid\ninvalid\n"
+  },
+  "railway-management": {
+    "stdout": "Torino->Roma: 315\nNapoli->Roma: 165\n"
+  },
+  "shells": {
+    "stdout": "10.00\n"
+  },
+  "soccer": {
+    "stdout": "Ada 0.0156\n"
+  },
+  "strawberry": {
+    "stdout": "4\n"
+  },
+  "super-calculator": {
+    "stdout": "9\n12\n5\n"
+  },
+  "unsafe-meat": {
+    "stdout": "5 safe\n15 unsafe\n37 unsafe\n100 safe\n20 unsafe\n"
+  },
+  "wobbletron3k": {
+    "stdout": "4\n"
+  },
+  "worms": {
+    "stdout": "1\n"
+  }
+}
