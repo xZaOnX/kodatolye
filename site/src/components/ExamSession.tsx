@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import type { ExamSessionItem } from '../types'
 import { checkAnswers } from '../lib/checkAnswers'
+import { useLanguage } from '../i18n/LanguageContext'
 import { BlankCode } from './BlankCode'
+import { FunctionDrillStep } from './FunctionDrillStep'
 
 type ExamSessionProps = {
   examTitle: string
@@ -18,6 +20,7 @@ export function ExamSession({
   onItemSolved,
   onFinished,
 }: ExamSessionProps) {
+  const { t } = useLanguage()
   const [index, setIndex] = useState(0)
   const item = items[index]
   const total = items.length
@@ -30,6 +33,12 @@ export function ExamSession({
     setIndex((i) => i + 1)
   }
 
+  function pillLabel(kind: ExamSessionItem['kind']): string {
+    if (kind === 'mcq') return t.pillMcq
+    if (kind === 'function') return t.pillFunction
+    return t.pillBlank
+  }
+
   if (!item) {
     return null
   }
@@ -38,9 +47,9 @@ export function ExamSession({
     <section className="exam-session">
       <header className="exercise-top">
         <button type="button" className="btn-ghost" onClick={onBack}>
-          ← Özet
+          {t.backBrief}
         </button>
-        <div className="progress" aria-label="Soru ilerlemesi">
+        <div className="progress" aria-label={t.questionProgressAria}>
           <span>
             {index + 1} / {total}
           </span>
@@ -54,13 +63,11 @@ export function ExamSession({
       </header>
 
       <div className="exercise-meta">
-        <span className="pill">
-          {item.kind === 'mcq' ? 'Çoktan seçmeli' : 'Boşluk doldur'}
-        </span>
+        <span className="pill">{pillLabel(item.kind)}</span>
         <span className="pill muted">{examTitle}</span>
       </div>
 
-      {item.kind === 'mcq' ? (
+      {item.kind === 'mcq' && (
         <McqStep
           key={item.data.id}
           question={item.data.question}
@@ -71,7 +78,17 @@ export function ExamSession({
           onContinue={goNext}
           isLast={index >= total - 1}
         />
-      ) : (
+      )}
+      {item.kind === 'function' && (
+        <FunctionDrillStep
+          key={item.data.id}
+          drill={item.data}
+          onSolved={() => onItemSolved(item.data.id)}
+          onContinue={goNext}
+          isLast={index >= total - 1}
+        />
+      )}
+      {item.kind === 'blank' && (
         <BlankStep
           key={item.data.id}
           title={item.data.title}
@@ -107,6 +124,7 @@ function McqStep({
   onContinue,
   isLast,
 }: McqStepProps) {
+  const { t } = useLanguage()
   const [selected, setSelected] = useState<number | null>(null)
   const [status, setStatus] = useState<'idle' | 'wrong' | 'ok'>('idle')
 
@@ -151,24 +169,24 @@ function McqStep({
             onClick={check}
             disabled={selected === null}
           >
-            Kontrol et
+            {t.check}
           </button>
         ) : (
           <button type="button" className="btn-primary" onClick={onContinue}>
-            {isLast ? 'Bitir' : 'Sonraki soru →'}
+            {isLast ? t.finish : t.nextQuestionArrow}
           </button>
         )}
       </div>
 
       {status === 'wrong' && (
         <p className="feedback feedback-wrong" role="status">
-          Yanlış — tekrar dene.
+          {t.mcqWrong}
         </p>
       )}
       {status === 'ok' && (
         <>
           <p className="feedback feedback-ok" role="status">
-            Doğru.
+            {t.correct}
           </p>
           <p className="hint">{explanation}</p>
         </>
@@ -199,6 +217,7 @@ function BlankStep({
   onContinue,
   isLast,
 }: BlankStepProps) {
+  const { t } = useLanguage()
   const [values, setValues] = useState<Record<string, string>>({})
   const [wrong, setWrong] = useState<string[]>([])
   const [status, setStatus] = useState<'idle' | 'wrong' | 'ok'>('idle')
@@ -206,7 +225,17 @@ function BlankStep({
 
   function handleCheck() {
     const result = checkAnswers(
-      { blanks, id: '', examId: '', examTitle: '', level: 1, title, goal, hint, template },
+      {
+        blanks,
+        id: '',
+        examId: '',
+        examTitle: '',
+        level: 1,
+        title,
+        goal,
+        hint,
+        template,
+      },
       values,
     )
     if (result.ok) {
@@ -239,11 +268,11 @@ function BlankStep({
       <div className="actions">
         {status !== 'ok' ? (
           <button type="button" className="btn-primary" onClick={handleCheck}>
-            Kontrol et
+            {t.check}
           </button>
         ) : (
           <button type="button" className="btn-primary" onClick={onContinue}>
-            {isLast ? 'Bitir' : 'Sonraki soru →'}
+            {isLast ? t.finish : t.nextQuestionArrow}
           </button>
         )}
         <button
@@ -251,18 +280,18 @@ function BlankStep({
           className="btn-ghost"
           onClick={() => setShowHint((v) => !v)}
         >
-          {showHint ? 'İpucunu gizle' : 'İpucu'}
+          {showHint ? t.hideHint : t.hint}
         </button>
       </div>
       {showHint && <p className="hint">{hint}</p>}
       {status === 'wrong' && (
         <p className="feedback feedback-wrong" role="status">
-          Bazı boşluklar yanlış — kırmızı olanlara bak.
+          {t.blankWrong}
         </p>
       )}
       {status === 'ok' && (
         <p className="feedback feedback-ok" role="status">
-          Doğru.
+          {t.correct}
         </p>
       )}
     </div>

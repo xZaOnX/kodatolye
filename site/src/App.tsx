@@ -1,70 +1,105 @@
-import { useMemo, useState } from 'react'
-import { exercises } from './data/exercises'
+import { useEffect, useMemo, useState } from 'react'
+import { getExercises, getExercisesForExam } from './data/exercises'
 import { getAllExamPacks, getExamPack } from './data/examPacks'
+import { getFunctionDrillsForExam } from './data/functionDrills'
 import {
   getFirstLesson,
+  getLessons,
   getNextLesson,
-  lessons,
 } from './data/lessons'
 import { Home } from './components/Home'
 import { ExamPicker } from './components/ExamPicker'
 import { ExamBrief } from './components/ExamBrief'
 import { ExamSession } from './components/ExamSession'
 import { LessonView } from './components/LessonView'
+import { LangSwitch } from './components/LangSwitch'
+import { PlaygroundDock } from './components/PlaygroundDock'
+import { PythonPlayground } from './components/PythonPlayground'
+import { useLanguage } from './i18n/LanguageContext'
 import type { ExamSessionItem, Lesson } from './types'
 
-type Screen = 'home' | 'lesson' | 'exam-picker' | 'exam-brief' | 'exam-session'
+type Screen =
+  | 'home'
+  | 'lesson'
+  | 'exam-picker'
+  | 'exam-brief'
+  | 'exam-session'
+  | 'playground'
 
 export default function App() {
+  const { lang, t } = useLanguage()
   const [screen, setScreen] = useState<Screen>('home')
-  const [currentLesson, setCurrentLesson] = useState<Lesson>(getFirstLesson())
+  const [currentLessonId, setCurrentLessonId] = useState(
+    () => getFirstLesson('tr').id,
+  )
   const [activeExamId, setActiveExamId] = useState<string | null>(null)
   const [doneLessons, setDoneLessons] = useState<string[]>([])
   const [solvedQuestionIds, setSolvedQuestionIds] = useState<string[]>([])
 
-  const packs = getAllExamPacks()
-  const lessonIndex = lessons.findIndex((l) => l.id === currentLesson.id)
-  const nextLesson = getNextLesson(currentLesson.id)
+  const packs = useMemo(() => getAllExamPacks(lang), [lang])
+  const lessonList = useMemo(() => getLessons(lang), [lang])
+  const allExercises = useMemo(() => getExercises(lang), [lang])
+
+  const currentLesson: Lesson =
+    lessonList.find((l) => l.id === currentLessonId) ?? lessonList[0]
+  const lessonIndex = lessonList.findIndex((l) => l.id === currentLesson.id)
+  const nextLesson = getNextLesson(currentLesson.id, lang)
+
+  useEffect(() => {
+    if (!lessonList.some((l) => l.id === currentLessonId) && lessonList[0]) {
+      setCurrentLessonId(lessonList[0].id)
+    }
+  }, [lessonList, currentLessonId])
 
   const totalQuestions = useMemo(() => {
     return packs.reduce((n, p) => {
-      const blanks = exercises.filter((e) => e.examId === p.examId).length
-      return n + p.mcqs.length + blanks
+      const blanks = allExercises.filter((e) => e.examId === p.examId).length
+      const fns = getFunctionDrillsForExam(p.examId, lang).length
+      return n + p.mcqs.length + fns + blanks
     }, 0)
-  }, [packs])
+  }, [packs, allExercises, lang])
 
   const progressByExam = useMemo(() => {
     const map: Record<string, number> = {}
     for (const p of packs) {
       const ids = [
         ...p.mcqs.map((m) => m.id),
-        ...exercises.filter((e) => e.examId === p.examId).map((e) => e.id),
+        ...getFunctionDrillsForExam(p.examId, lang).map((d) => d.id),
+        ...allExercises.filter((e) => e.examId === p.examId).map((e) => e.id),
       ]
       map[p.examId] = ids.filter((id) => solvedQuestionIds.includes(id)).length
     }
     return map
-  }, [packs, solvedQuestionIds])
+  }, [packs, allExercises, solvedQuestionIds, lang])
 
-  const activePack = activeExamId ? getExamPack(activeExamId) : undefined
+  const activePack = activeExamId ? getExamPack(activeExamId, lang) : undefined
   const activeBlanks = activeExamId
-    ? exercises.filter((e) => e.examId === activeExamId)
+    ? getExercisesForExam(activeExamId, lang)
+    : []
+  const activeFns = activeExamId
+    ? getFunctionDrillsForExam(activeExamId, lang)
     : []
 
   const sessionItems: ExamSessionItem[] = useMemo(() => {
     if (!activePack) return []
     return [
       ...activePack.mcqs.map((m) => ({ kind: 'mcq' as const, data: m })),
+      ...activeFns.map((d) => ({ kind: 'function' as const, data: d })),
       ...activeBlanks.map((b) => ({ kind: 'blank' as const, data: b })),
     ]
-  }, [activePack, activeBlanks])
+  }, [activePack, activeFns, activeBlanks])
 
   function startBasics() {
-    setCurrentLesson(getFirstLesson())
+    setCurrentLessonId(getFirstLesson(lang).id)
     setScreen('lesson')
   }
 
   function startExamPrep() {
     setScreen('exam-picker')
+  }
+
+  function startPlayground() {
+    setScreen('playground')
   }
 
   function pickExam(examId: string) {
@@ -81,12 +116,12 @@ export default function App() {
   }
 
   function goNextLesson(fromId: string) {
-    const next = getNextLesson(fromId)
+    const next = getNextLesson(fromId, lang)
     if (!next) {
       setScreen('home')
       return
     }
-    setCurrentLesson(next)
+    setCurrentLessonId(next.id)
   }
 
   function markSolved(id: string) {
@@ -96,24 +131,28 @@ export default function App() {
   return (
     <div className="shell">
       <div className="atmosphere" aria-hidden />
-      <main className="frame">
+      <div className="topbar">
+        <LangSwitch />
+      </div>
+      <main className={`frame${screen === 'playground' ? ' frame--wide' : ''}`}>
         {screen === 'home' && (
           <Home
-            lessonCount={lessons.length}
+            lessonCount={lessonList.length}
             examCount={packs.length}
             questionCount={totalQuestions}
             lessonsDone={doneLessons.length}
             questionsDone={solvedQuestionIds.length}
             onStartBasics={startBasics}
             onStartExamPrep={startExamPrep}
+            onStartPlayground={startPlayground}
           />
         )}
         {screen === 'lesson' && (
           <LessonView
-            key={currentLesson.id}
+            key={`${currentLesson.id}-${lang}`}
             lesson={currentLesson}
             index={Math.max(0, lessonIndex)}
-            total={lessons.length}
+            total={lessonList.length}
             onBack={() => setScreen('home')}
             onCompleted={completeLesson}
             onNext={goNextLesson}
@@ -131,6 +170,7 @@ export default function App() {
         {screen === 'exam-brief' && activePack && (
           <ExamBrief
             pack={activePack}
+            functionCount={activeFns.length}
             blankCount={activeBlanks.length}
             onBack={() => setScreen('exam-picker')}
             onStart={startSession}
@@ -138,7 +178,7 @@ export default function App() {
         )}
         {screen === 'exam-session' && activePack && (
           <ExamSession
-            key={activePack.examId}
+            key={`${activePack.examId}-${lang}`}
             examTitle={activePack.examTitle}
             items={sessionItems}
             onBack={() => setScreen('exam-brief')}
@@ -146,13 +186,24 @@ export default function App() {
             onFinished={() => setScreen('exam-picker')}
           />
         )}
+        {screen === 'playground' && (
+          <div className="playground-screen">
+            <PythonPlayground
+              mode="fullscreen"
+              onBack={() => setScreen('home')}
+            />
+          </div>
+        )}
       </main>
-      <footer className="foot">
-        <span>KodAtölye</span>
-        <span>
-          {doneLessons.length} ders · {solvedQuestionIds.length} soru
-        </span>
-      </footer>
+      {screen !== 'playground' && (
+        <footer className="foot">
+          <span>KodAtölye</span>
+          <span>
+            {t.footStats(doneLessons.length, solvedQuestionIds.length)}
+          </span>
+        </footer>
+      )}
+      <PlaygroundDock hidden={screen === 'playground'} />
     </div>
   )
 }

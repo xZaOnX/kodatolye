@@ -1,4 +1,5 @@
 import type { ExamPack } from '../types'
+import { useLanguage } from '../i18n/LanguageContext'
 
 type ExamPickerProps = {
   packs: ExamPack[]
@@ -8,24 +9,23 @@ type ExamPickerProps = {
 }
 
 export function ExamPicker({ packs, progress, onBack, onPick }: ExamPickerProps) {
+  const { t } = useLanguage()
+
   return (
     <section className="exercise-list">
       <header className="exercise-top">
         <button type="button" className="btn-ghost" onClick={onBack}>
-          ← Ana sayfa
+          {t.backHome}
         </button>
-        <span className="meta">{packs.length} exam</span>
+        <span className="meta">{t.examMeta(packs.length)}</span>
       </header>
 
-      <h2 className="exercise-title">Sınava çalış</h2>
-      <p className="exercise-goal">
-        Bir exam seç. Önce ne yapman gerektiğini oku, sonra soruları çöz.
-      </p>
+      <h2 className="exercise-title">{t.examPickerTitle}</h2>
+      <p className="exercise-goal">{t.examPickerGoal}</p>
 
       <ul className="exam-pick-list">
         {packs.map((pack) => {
           const done = progress[pack.examId] ?? 0
-          // 2 mcq + blanks estimated later in parent; show pack title only here
           return (
             <li key={pack.examId}>
               <button
@@ -36,7 +36,7 @@ export function ExamPicker({ packs, progress, onBack, onPick }: ExamPickerProps)
                 <span className="exam-pick-title">{pack.examTitle}</span>
                 <span className="exam-pick-desc">{pack.summary}</span>
                 <span className="exam-pick-meta">
-                  {done > 0 ? `${done} soru çözüldü` : 'Henüz başlanmadı'} →
+                  {done > 0 ? t.questionsSolved(done) : t.notStarted} →
                 </span>
               </button>
             </li>

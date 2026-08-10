@@ -877,16 +877,30 @@ with open("people.txt") as f:
   },
 ]
 
-export function getLessonById(id: string): Lesson | undefined {
-  return lessons.find((l) => l.id === id)
+import { lessonsEn } from './lessons.en'
+import type { Lang } from '../i18n/types'
+
+export function getLessons(lang: Lang = 'tr'): Lesson[] {
+  return lang === 'en' ? lessonsEn : lessons
 }
 
-export function getFirstLesson(): Lesson {
-  return lessons[0]
+export function getLessonById(
+  id: string,
+  lang: Lang = 'tr',
+): Lesson | undefined {
+  return getLessons(lang).find((l) => l.id === id)
 }
 
-export function getNextLesson(id: string): Lesson | undefined {
-  const i = lessons.findIndex((l) => l.id === id)
-  if (i < 0 || i >= lessons.length - 1) return undefined
-  return lessons[i + 1]
+export function getFirstLesson(lang: Lang = 'tr'): Lesson {
+  return getLessons(lang)[0]
+}
+
+export function getNextLesson(
+  id: string,
+  lang: Lang = 'tr',
+): Lesson | undefined {
+  const list = getLessons(lang)
+  const i = list.findIndex((l) => l.id === id)
+  if (i < 0 || i >= list.length - 1) return undefined
+  return list[i + 1]
 }

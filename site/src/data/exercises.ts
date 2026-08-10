@@ -1,4 +1,6 @@
 import type { Exercise } from '../types'
+import { exercisesEn } from './exercises.en'
+import type { Lang } from '../i18n/types'
 
 /** Auto-generated Level-1 scaffold exercises from exams/ */
 export const exercises: Exercise[] = [
@@ -1204,5 +1206,22 @@ export function getExercisesByExam(): { examId: string; examTitle: string; items
     map.get(e.examId)!.items.push(e)
   }
   return Array.from(map.values())
+}
+
+export function localizeExercise(exercise: Exercise, lang: Lang): Exercise {
+  if (lang !== 'en') return exercise
+  const copy = exercisesEn[exercise.id]
+  if (!copy) return exercise
+  return { ...exercise, title: copy.title, goal: copy.goal, hint: copy.hint }
+}
+
+export function getExercises(lang: Lang = 'tr'): Exercise[] {
+  return exercises.map((e) => localizeExercise(e, lang))
+}
+
+export function getExercisesForExam(examId: string, lang: Lang = 'tr'): Exercise[] {
+  return exercises
+    .filter((e) => e.examId === examId)
+    .map((e) => localizeExercise(e, lang))
 }
 

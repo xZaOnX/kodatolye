@@ -1,4 +1,5 @@
 import { Fragment } from 'react'
+import { useLanguage } from '../i18n/LanguageContext'
 
 type BlankCodeProps = {
   template: string
@@ -40,10 +41,11 @@ export function BlankCode({
   disabled,
   onChange,
 }: BlankCodeProps) {
+  const { t } = useLanguage()
   const parts = parseTemplate(template)
 
   return (
-    <pre className="code-block" aria-label="Kod egzersizi">
+    <pre className="code-block" aria-label={t.codeExerciseAria}>
       <code>
         {parts.map((part, i) => {
           if (part.type === 'text') {
@@ -60,7 +62,7 @@ export function BlankCode({
               value={values[part.id] ?? ''}
               onChange={(e) => onChange(part.id, e.target.value)}
               disabled={disabled}
-              aria-label={`Boşluk ${part.id}`}
+              aria-label={t.blankAria(part.id)}
               spellCheck={false}
               autoComplete="off"
               size={width}

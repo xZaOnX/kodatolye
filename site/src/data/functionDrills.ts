@@ -1,0 +1,1321 @@
+import type { FunctionDrill } from '../types'
+import { functionDrillsEn } from './functionDrills.en'
+import type { Lang } from '../i18n/types'
+
+export const functionDrills: FunctionDrill[] = [
+  {
+    "id": "armstrong-fn-armstrong",
+    "examId": "armstrong",
+    "examTitle": "Armstrong Numbers",
+    "functionName": "armstrong",
+    "purpose": "Bir sayının Armstrong olup olmadığını kontrol eder: basamak sayısı n ise her basamağın n. kuvvetinin toplamı sayıya eşit mi?",
+    "examples": [
+      {
+        "call": "armstrong(153)",
+        "result": "True"
+      },
+      {
+        "call": "armstrong(42)",
+        "result": "False"
+      }
+    ],
+    "signature": "def armstrong(number):",
+    "whyItMatters": "Exam'in kalbi bu fonksiyon; main sadece dosyadan okuyup bunu çağırır.",
+    "template": "def armstrong(number):\n    text = str({{1}})\n    n = len(text)\n    total = 0\n    for d in text:\n        total += int(d) ** {{2}}\n    return total == {{3}}",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "number"
+      },
+      {
+        "id": "2",
+        "answer": "n"
+      },
+      {
+        "id": "3",
+        "answer": "number"
+      }
+    ],
+    "hint": "n = len(str(number)); her basamak ** n."
+  },
+  {
+    "id": "armstrong-fn-filter_line",
+    "examId": "armstrong",
+    "examTitle": "Armstrong Numbers",
+    "functionName": "filter_line",
+    "purpose": "Dosyadaki bir satırı sayıya çevirip Armstrong ise çıktı dosyasına yazar. Okuma/yazma döngüsünün tek adımıdır.",
+    "examples": [
+      {
+        "call": "satır '153\\n', armstrong True",
+        "result": "out'a 153 yazılır"
+      }
+    ],
+    "signature": "def write_if_armstrong(line, out):",
+    "whyItMatters": "Filtre kalıbı: oku → dönüştür → koşul → yaz.",
+    "template": "def write_if_armstrong(line, out):\n    n = {{1}}(line.strip())\n    if armstrong(n):\n        out.write(f\"{n}\\n\")",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "int"
+      }
+    ],
+    "hint": "strip sonrası int."
+  },
+  {
+    "id": "ascii-stats-fn-readfile",
+    "examId": "ascii-stats",
+    "examTitle": "ASCII Stats",
+    "functionName": "readfile",
+    "purpose": "Manzara dosyasının tüm satırlarını bir liste olarak döndürür.",
+    "examples": [
+      {
+        "call": "readfile('landscape.txt')",
+        "result": "['...\\n', '...\\n', ...]"
+      }
+    ],
+    "signature": "def readfile(filename):",
+    "whyItMatters": "Önce veriyi belleğe al, sonra kare üzerinde say.",
+    "template": "def readfile(filename):\n    data = {{1}}()\n    with open(filename) as file:\n        data.extend(file.{{2}}())\n    return data",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "list"
+      },
+      {
+        "id": "2",
+        "answer": "readlines"
+      }
+    ],
+    "hint": "Boş liste + readlines/extend."
+  },
+  {
+    "id": "ascii-stats-fn-count_cell",
+    "examId": "ascii-stats",
+    "examTitle": "ASCII Stats",
+    "functionName": "count_cell",
+    "purpose": "Kare içindeki bir hücredeki sembolü frekans sözlüğüne ekler.",
+    "examples": [
+      {
+        "call": "symbol '#' ilk kez",
+        "result": "stat['#'] = 1"
+      }
+    ],
+    "signature": "def bump(stat, symbol):",
+    "whyItMatters": "İç içe döngünün tek adımı — dict biriktirme.",
+    "template": "def bump(stat, symbol):\n    if symbol not in stat:\n        stat[symbol] = {{1}}\n    stat[symbol] {{2}} 1",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "0"
+      },
+      {
+        "id": "2",
+        "answer": "+="
+      }
+    ],
+    "hint": "Yoksa 0, sonra += 1."
+  },
+  {
+    "id": "atomic-chess-fn-square_to_indexes",
+    "examId": "atomic-chess",
+    "examTitle": "Atomic Chess",
+    "functionName": "square_to_indexes",
+    "purpose": "Satranç notasyonunu (örn. 'e2') satır ve sütun indeksine çevirir.",
+    "examples": [
+      {
+        "call": "square_to_indexes('a1')",
+        "result": "(0, 0)"
+      }
+    ],
+    "signature": "def square_to_indexes(square):",
+    "whyItMatters": "Tahta erişiminden önce notasyonu indeksle.",
+    "template": "def square_to_indexes(square):\n    return int(square[{{1}}]) - 1, \"abcdefgh\".index(square[{{2}}])",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "1"
+      },
+      {
+        "id": "2",
+        "answer": "0"
+      }
+    ],
+    "hint": "Harf sütun (0), rakam satır (1)."
+  },
+  {
+    "id": "atomic-chess-fn-get_player",
+    "examId": "atomic-chess",
+    "examTitle": "Atomic Chess",
+    "functionName": "get_player",
+    "purpose": "Karedeki taşın sahibini bulur: + beyaz, - siyah, boşsa 0.",
+    "examples": [
+      {
+        "call": "'+P'",
+        "result": "1"
+      },
+      {
+        "call": "'-k'",
+        "result": "-1"
+      }
+    ],
+    "signature": "def get_player(cell):",
+    "whyItMatters": "Hamle ve patlama mantığı oyuncuyu buna göre ayırır.",
+    "template": "def get_player(cell):\n    if '+' in cell:\n        return {{1}}\n    if '-' in cell:\n        return {{2}}\n    return {{3}}",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "1"
+      },
+      {
+        "id": "2",
+        "answer": "-1"
+      },
+      {
+        "id": "3",
+        "answer": "0"
+      }
+    ],
+    "hint": "+ → 1, - → -1."
+  },
+  {
+    "id": "battleship-fn-parse_shot",
+    "examId": "battleship",
+    "examTitle": "Battleship",
+    "functionName": "parse_shot",
+    "purpose": "Atış metnini (örn. 'A,5') satır/sütun indeksine çevirir.",
+    "examples": [
+      {
+        "call": "parse_shot('A,1')",
+        "result": "(0, 0)"
+      }
+    ],
+    "signature": "def parse_shot(coord):",
+    "whyItMatters": "moves.txt satırlarını tahta indeksine bağlar.",
+    "template": "def parse_shot(coord):\n    row = ord(coord[0]) - ord({{1}})\n    col = int(coord.split(',')[1]) - {{2}}\n    return row, col",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "'A'",
+        "accept": [
+          "\"A\""
+        ]
+      },
+      {
+        "id": "2",
+        "answer": "1"
+      }
+    ],
+    "hint": "A→0, sütun 1-tabanlı."
+  },
+  {
+    "id": "battleship-fn-apply_shot",
+    "examId": "battleship",
+    "examTitle": "Battleship",
+    "functionName": "apply_shot",
+    "purpose": "Rakip haritaya göre isabet veya ıska işaretler.",
+    "examples": [
+      {
+        "call": "opponent[r][c]=='#'",
+        "result": "hit / '*'"
+      }
+    ],
+    "signature": "def apply_shot(opponent, shot_map, row, col):",
+    "whyItMatters": "Oyunun her turunun sonucu burada üretilir.",
+    "template": "def apply_shot(opponent, shot_map, row, col):\n    if opponent[row][col] == {{1}}:\n        shot_map[row][col] = '*'\n        return 'hit'\n    shot_map[row][col] = {{2}}\n    return 'miss' ",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "'#'",
+        "accept": [
+          "\"#\""
+        ]
+      },
+      {
+        "id": "2",
+        "answer": "'o'",
+        "accept": [
+          "\"o\""
+        ]
+      }
+    ],
+    "hint": "Gemi #, ıska o."
+  },
+  {
+    "id": "biodiversity-fn-is_duplicate",
+    "examId": "biodiversity",
+    "examTitle": "Biodiversity",
+    "functionName": "is_duplicate",
+    "purpose": "Örnek satırının daha önce görülüp görülmediğini set ile kontrol eder.",
+    "examples": [
+      {
+        "call": "text set'te var",
+        "result": "True (tekrar)"
+      }
+    ],
+    "signature": "def is_duplicate(text, seen):",
+    "whyItMatters": "Tekrarlayan eDNA örneklerini ayıklamak için.",
+    "template": "def is_duplicate(text, seen):\n    if text {{1}} seen:\n        return True\n    seen.add(text)\n    return False",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "in"
+      }
+    ],
+    "hint": "in + add."
+  },
+  {
+    "id": "biodiversity-fn-dna_match",
+    "examId": "biodiversity",
+    "examTitle": "Biodiversity",
+    "functionName": "dna_match",
+    "purpose": "Örnek DNA'nın tür DNA'sında alt dizi olarak geçip geçmediğine bakar.",
+    "examples": [
+      {
+        "call": "'AT' in 'GGATTA'",
+        "result": "True"
+      }
+    ],
+    "signature": "def dna_match(sample, species_dna):",
+    "whyItMatters": "Eşleştirmenin temel operatörü.",
+    "template": "def dna_match(sample, species_dna):\n    return sample {{1}} species_dna",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "in"
+      }
+    ],
+    "hint": "substring: in."
+  },
+  {
+    "id": "chess-selo-fn-elo_win",
+    "examId": "chess-selo",
+    "examTitle": "Chess SELO",
+    "functionName": "elo_win",
+    "purpose": "Kazanan ve kaybedenin SELO puanını delta ile günceller.",
+    "examples": [
+      {
+        "call": "elo_win(1600, 1400)",
+        "result": "yuvarlanmış yeni puanlar"
+      }
+    ],
+    "signature": "def elo_win(winner, loser):",
+    "whyItMatters": "Maç sonucunun puana yansıması.",
+    "template": "def elo_win(winner, loser):\n    d = delta(winner, loser)\n    winner += 200 * d\n    loser -= {{1}} * d\n    return round(winner), round(loser)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "200"
+      }
+    ],
+    "hint": "Simetrik ±200*d."
+  },
+  {
+    "id": "chess-selo-fn-ensure_player",
+    "examId": "chess-selo",
+    "examTitle": "Chess SELO",
+    "functionName": "ensure_player",
+    "purpose": "Oyuncu yoksa varsayılan 1500 puanla sözlüğe ekler.",
+    "examples": [
+      {
+        "call": "yeni isim",
+        "result": "players[name]=1500"
+      }
+    ],
+    "signature": "def ensure_player(players, name):",
+    "whyItMatters": "CSV'de eksik oyuncuları tolere etmek için.",
+    "template": "def ensure_player(players, name):\n    if name {{1}} players:\n        players[name] = {{2}}",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "not in"
+      },
+      {
+        "id": "2",
+        "answer": "1500"
+      }
+    ],
+    "hint": "not in → 1500."
+  },
+  {
+    "id": "connect-four-fn-find_bottom",
+    "examId": "connect-four",
+    "examTitle": "Connect Four",
+    "functionName": "find_bottom",
+    "purpose": "Bir sütunda yerçekimiyle taşın düşeceği en alt boş satırı bulur.",
+    "examples": [
+      {
+        "call": "boş sütun, NUM_ROWS=6",
+        "result": "5"
+      }
+    ],
+    "signature": "def find_bottom(board, column, EMPTY, NUM_ROWS):",
+    "whyItMatters": "Hamle yerleştirmeden önce zorunlu.",
+    "template": "def find_bottom(board, column, EMPTY, NUM_ROWS):\n    bottom = NUM_ROWS - 1\n    while board[bottom][column] != EMPTY:\n        bottom {{1}} 1\n    return bottom",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "-="
+      }
+    ],
+    "hint": "Doluysa bir yukarı."
+  },
+  {
+    "id": "connect-four-fn-four_horizontal",
+    "examId": "connect-four",
+    "examTitle": "Connect Four",
+    "functionName": "four_horizontal",
+    "purpose": "Yatayda dört aynı dolu hücre var mı bakar.",
+    "examples": [
+      {
+        "call": "OOOO yan yana",
+        "result": "True / sembol"
+      }
+    ],
+    "signature": "def four_horizontal(board, r, c, EMPTY):",
+    "whyItMatters": "check_win'in en basit parçası.",
+    "template": "def four_horizontal(board, r, c, EMPTY):\n    if board[r][c] == EMPTY:\n        return False\n    return board[r][c] == board[r][c+1] == board[r][c+2] == board[r][{{1}}]",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "c+3",
+        "accept": [
+          "c + 3"
+        ]
+      }
+    ],
+    "hint": "c+3 son hücre."
+  },
+  {
+    "id": "consumption+production-fn-store_consumption",
+    "examId": "consumption+production",
+    "examTitle": "Consumption+Production",
+    "functionName": "store_consumption",
+    "purpose": "Tüketim kaydını (ID, Date, Time) anahtarıyla sözlüğe koyar.",
+    "examples": [
+      {
+        "call": "aynı anahtar",
+        "result": "float enerji değeri"
+      }
+    ],
+    "signature": "def store_consumption(consumption, row):",
+    "whyItMatters": "Sonra üretimle eşleştirmek için lookup.",
+    "template": "def store_consumption(consumption, row):\n    key = (row['Household_ID'], row['Date'], row['Time'])\n    consumption[key] = {{1}}(row['Energy_consumption'])",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "float"
+      }
+    ],
+    "hint": "CSV alanları string gelir."
+  },
+  {
+    "id": "consumption+production-fn-self_consumed",
+    "examId": "consumption+production",
+    "examTitle": "Consumption+Production",
+    "functionName": "self_consumed",
+    "purpose": "Üretilen ve tüketilen enerjiden öz tüketimi hesaplar.",
+    "examples": [
+      {
+        "call": "prod=5, cons=3",
+        "result": "3"
+      }
+    ],
+    "signature": "def self_consumed(produced, consumed):",
+    "whyItMatters": "İstatistiklerin temel formülü.",
+    "template": "def self_consumed(produced, consumed):\n    return {{1}}(produced, consumed)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "min"
+      }
+    ],
+    "hint": "min(üretim, tüketim)."
+  },
+  {
+    "id": "crypto-fn-evaluate_portfolio",
+    "examId": "crypto",
+    "examTitle": "Cryptocurrency",
+    "functionName": "evaluate_portfolio",
+    "purpose": "Bir gündeki token fiyatlarıyla portföyün toplam değerini hesaplar.",
+    "examples": [
+      {
+        "call": "1 BTC @ 100, qty 2",
+        "result": "200"
+      }
+    ],
+    "signature": "def evaluate_portfolio(portfolio, prices):",
+    "whyItMatters": "Max günü bulmak için her tarih için çağrılır.",
+    "template": "def evaluate_portfolio(portfolio, prices):\n    total = 0\n    for token, price in prices:\n        if token in portfolio:\n            total {{1}} portfolio[token] * price\n    return total",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "+="
+      }
+    ],
+    "hint": "qty * price biriktir."
+  },
+  {
+    "id": "crypto-fn-add_price",
+    "examId": "crypto",
+    "examTitle": "Cryptocurrency",
+    "functionName": "add_price",
+    "purpose": "Fiyat kaydını tarihe göre gruplar.",
+    "examples": [
+      {
+        "call": "yeni tarih",
+        "result": "prices[date] = [(token, price)]"
+      }
+    ],
+    "signature": "def add_price(prices, date, token, price):",
+    "whyItMatters": "read_prices içindeki biriktirme adımı.",
+    "template": "def add_price(prices, date, token, price):\n    if date not in prices:\n        prices[date] = {{1}}()\n    prices[date].append((token, price))",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "list"
+      }
+    ],
+    "hint": "Yoksa boş liste."
+  },
+  {
+    "id": "everwhen-fn-day_label",
+    "examId": "everwhen",
+    "examTitle": "Everwhen",
+    "functionName": "day_label",
+    "purpose": "UTC'ye çevrilmiş dakika değerine göre yesterday/today/tomorrow etiketi üretir.",
+    "examples": [
+      {
+        "call": "raw=-10",
+        "result": "'yesterday'"
+      }
+    ],
+    "signature": "def day_label(raw):",
+    "whyItMatters": "Timezone wrap-around'un okunabilir hali.",
+    "template": "def day_label(raw):\n    if raw < 0:\n        return {{1}}\n    if raw >= 24 * 60:\n        return {{2}}\n    return {{3}}",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "'yesterday'",
+        "accept": [
+          "\"yesterday\""
+        ]
+      },
+      {
+        "id": "2",
+        "answer": "'tomorrow'",
+        "accept": [
+          "\"tomorrow\""
+        ]
+      },
+      {
+        "id": "3",
+        "answer": "'today'",
+        "accept": [
+          "\"today\""
+        ]
+      }
+    ],
+    "hint": "0..1439 → today."
+  },
+  {
+    "id": "everwhen-fn-to_minutes",
+    "examId": "everwhen",
+    "examTitle": "Everwhen",
+    "functionName": "to_minutes",
+    "purpose": "Saat ve dakikayı toplam dakikaya çevirir (offset ekleyerek).",
+    "examples": [
+      {
+        "call": "h=1,m=30,off=60",
+        "result": "150"
+      }
+    ],
+    "signature": "def to_minutes(h, m, offset):",
+    "whyItMatters": "convert_to_utc'nin aritmetik çekirdeği.",
+    "template": "def to_minutes(h, m, offset):\n    return int(h) * {{1}} + int(m) + offset",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "60"
+      }
+    ],
+    "hint": "1 saat = 60 dk."
+  },
+  {
+    "id": "flights-booking-fn-can_book",
+    "examId": "flights-booking",
+    "examTitle": "Flights Booking",
+    "functionName": "can_book",
+    "purpose": "İstenen koltuk sayısı kapasiteyi aşıyor mu bakar.",
+    "examples": [
+      {
+        "call": "dolu + 1",
+        "result": "False"
+      }
+    ],
+    "signature": "def can_book(passengers, flight, seats, rows, cols):",
+    "whyItMatters": "BOOK fail kararının koşulu.",
+    "template": "def can_book(passengers, flight, seats, rows, cols):\n    return len(passengers[flight]) + seats {{1}} rows * cols",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "<="
+      }
+    ],
+    "hint": "len+seats <= kapasite."
+  },
+  {
+    "id": "flights-booking-fn-cancel_all",
+    "examId": "flights-booking",
+    "examTitle": "Flights Booking",
+    "functionName": "cancel_all",
+    "purpose": "Bir yolcunun tüm koltuklarını listeden siler.",
+    "examples": [
+      {
+        "call": "Ada 3 kez",
+        "result": "hiç Ada kalmaz"
+      }
+    ],
+    "signature": "def cancel_all(passengers, flight, name):",
+    "whyItMatters": "CANCEL işleminin özü.",
+    "template": "def cancel_all(passengers, flight, name):\n    while name {{1}} passengers[flight]:\n        passengers[flight].remove(name)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "in"
+      }
+    ],
+    "hint": "while name in list."
+  },
+  {
+    "id": "freedonia-fn-string_to_date",
+    "examId": "freedonia",
+    "examTitle": "Freedonia",
+    "functionName": "string_to_date",
+    "purpose": "dd-mm-yyyy metnini sıralanabilir (y,m,d) tuple'ına çevirir.",
+    "examples": [
+      {
+        "call": "string_to_date('01-02-2020')",
+        "result": "(2020, 2, 1)"
+      }
+    ],
+    "signature": "def string_to_date(string):",
+    "whyItMatters": "Tarihe göre kural uygulamak için sıralama anahtarı.",
+    "template": "def string_to_date(string):\n    d, m, y = string.split('-')\n    return int({{1}}), int({{2}}), int({{3}})",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "y"
+      },
+      {
+        "id": "2",
+        "answer": "m"
+      },
+      {
+        "id": "3",
+        "answer": "d"
+      }
+    ],
+    "hint": "Yıl önce gelsin."
+  },
+  {
+    "id": "freedonia-fn-apply_rules",
+    "examId": "freedonia",
+    "examTitle": "Freedonia",
+    "functionName": "apply_rules",
+    "purpose": "Aktif kural setine ekleme ve silme uygular.",
+    "examples": [
+      {
+        "call": "+A sonra -A",
+        "result": "A yok"
+      }
+    ],
+    "signature": "def apply_rules(active, r_add, r_del):",
+    "whyItMatters": "get_active_rules döngüsünün bir adımı.",
+    "template": "def apply_rules(active, r_add, r_del):\n    active {{1}} r_add\n    active {{2}} r_del\n    return active",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "|="
+      },
+      {
+        "id": "2",
+        "answer": "-="
+      }
+    ],
+    "hint": "set birleşim / fark."
+  },
+  {
+    "id": "heating-fn-parse_csv_line",
+    "examId": "heating",
+    "examTitle": "Heating",
+    "functionName": "parse_csv_line",
+    "purpose": "CSV satırından tarih metni ve tüketim float'ını ayırır.",
+    "examples": [
+      {
+        "call": "'2020-01-01 00:00,12.5'",
+        "result": "('2020-01-01', 12.5)"
+      }
+    ],
+    "signature": "def parse_csv_line(line):",
+    "whyItMatters": "Her satırın parse'ı buradan geçer.",
+    "template": "def parse_csv_line(line):\n    timestamp, consumption = line.{{1}}(',')\n    date = timestamp.split(' ')[0]\n    return date, {{2}}(consumption)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "split"
+      },
+      {
+        "id": "2",
+        "answer": "float"
+      }
+    ],
+    "hint": "split(',') + float."
+  },
+  {
+    "id": "heating-fn-add_month",
+    "examId": "heating",
+    "examTitle": "Heating",
+    "functionName": "add_month",
+    "purpose": "Aylık tüketim sözlüğüne değer ekler.",
+    "examples": [
+      {
+        "call": "ay yokken 10",
+        "result": "monthly[ay]=10"
+      }
+    ],
+    "signature": "def add_month(monthly, month, consumption):",
+    "whyItMatters": "Aylık istatistiğin biriktirme kalıbı.",
+    "template": "def add_month(monthly, month, consumption):\n    if month not in monthly:\n        monthly[month] = {{1}}\n    monthly[month] {{2}} consumption",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "0"
+      },
+      {
+        "id": "2",
+        "answer": "+="
+      }
+    ],
+    "hint": "yoksa 0, +=."
+  },
+  {
+    "id": "linmgoweave-fn-calculate_score",
+    "examId": "linmgoweave",
+    "examTitle": "LingoWeave",
+    "functionName": "calculate_score",
+    "purpose": "Kelimenin pattern içinde kaç kez geçtiğini sayıp uzunlukla çarpar.",
+    "examples": [
+      {
+        "call": "word='ab', pattern='abab'",
+        "result": "4"
+      }
+    ],
+    "signature": "def calculate_score(word, pattern):",
+    "whyItMatters": "Skor üretmenin tek yolu.",
+    "template": "def calculate_score(word, pattern):\n    count = 0\n    for i in range(len(pattern)):\n        if pattern[i:i+len(word)] == {{1}}:\n            count += 1\n    return count * len({{2}})",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "word"
+      },
+      {
+        "id": "2",
+        "answer": "word"
+      }
+    ],
+    "hint": "Pencere == word; skor count*len."
+  },
+  {
+    "id": "linmgoweave-fn-unique_score",
+    "examId": "linmgoweave",
+    "examTitle": "LingoWeave",
+    "functionName": "unique_score",
+    "purpose": "Skor daha önce kullanıldıysa 0'a çeker; ilk kezse set'e ekler.",
+    "examples": [
+      {
+        "call": "s=4 ikinci kez",
+        "result": "0"
+      }
+    ],
+    "signature": "def unique_score(s, scores):",
+    "whyItMatters": "Aynı skoru ikinci kelimeye vermemek kuralı.",
+    "template": "def unique_score(s, scores):\n    if s not in scores:\n        scores.add(s)\n        return s\n    return {{1}}",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "0"
+      }
+    ],
+    "hint": "Tekrar → 0."
+  },
+  {
+    "id": "magic-boxes-fn-find_box",
+    "examId": "magic-boxes",
+    "examTitle": "Magic Boxes",
+    "functionName": "find_box",
+    "purpose": "Önce aynı tipin olduğu kutuyu, yoksa boş kutuyu arar.",
+    "examples": [
+      {
+        "call": "obj='apple', kutu0=['apple']",
+        "result": "0"
+      }
+    ],
+    "signature": "def find_box(boxes, obj):",
+    "whyItMatters": "Tip kilidinin uygulandığı yer.",
+    "template": "def find_box(boxes, obj):\n    for index, box in enumerate(boxes):\n        if obj {{1}} box:\n            return index\n    for index, box in enumerate(boxes):\n        if {{2}} box:\n            return index\n    return None",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "in"
+      },
+      {
+        "id": "2",
+        "answer": "not"
+      }
+    ],
+    "hint": "önce tip, sonra boş."
+  },
+  {
+    "id": "magic-boxes-fn-add_object",
+    "examId": "magic-boxes",
+    "examTitle": "Magic Boxes",
+    "functionName": "add_object",
+    "purpose": "Uygun kutuya nesne ekler; kutu yoksa False döner.",
+    "examples": [
+      {
+        "call": "boş yok",
+        "result": "False"
+      }
+    ],
+    "signature": "def add_object(boxes, obj):",
+    "whyItMatters": "Bob'un her ekleme denemesi.",
+    "template": "def add_object(boxes, obj):\n    bi = find_box(boxes, obj)\n    if bi is None:\n        return False\n    boxes[bi].{{1}}(obj)\n    return True",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "append"
+      }
+    ],
+    "hint": "append + None kontrolü."
+  },
+  {
+    "id": "misspell-fn-mispell",
+    "examId": "misspell",
+    "examTitle": "Misspell",
+    "functionName": "mispell",
+    "purpose": "İki kelime aynı uzunlukta ve tam bir harf farklı mı bakar (case-insensitive).",
+    "examples": [
+      {
+        "call": "mispell('Ada','Ada')",
+        "result": "False"
+      },
+      {
+        "call": "mispell('Ada','Aba')",
+        "result": "True"
+      }
+    ],
+    "signature": "def mispell(word1, word2):",
+    "whyItMatters": "Benzer isim aramanın tanımı.",
+    "template": "def mispell(word1, word2):\n    if len(word1) != len(word2):\n        return {{1}}\n    diff = 0\n    for a, b in zip(word1.upper(), word2.upper()):\n        if a != b:\n            diff += 1\n    return diff == {{2}}",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "False"
+      },
+      {
+        "id": "2",
+        "answer": "1"
+      }
+    ],
+    "hint": "Tam 1 fark."
+  },
+  {
+    "id": "misspell-fn-read_list",
+    "examId": "misspell",
+    "examTitle": "Misspell",
+    "functionName": "read_list",
+    "purpose": "Dosyadaki satırları kelime listesi olarak okur.",
+    "examples": [
+      {
+        "call": "3 satırlık dosya",
+        "result": "3 elemanlı liste"
+      }
+    ],
+    "signature": "def read_list(file_name):",
+    "whyItMatters": "İsim ve sözlük dosyaları aynı okuyucuyla gelir.",
+    "template": "def read_list(file_name):\n    with open(file_name) as fin:\n        words = fin.read().{{1}}('\\n')\n    return words",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "split"
+      }
+    ],
+    "hint": "read().split('\\n')."
+  },
+  {
+    "id": "munodi-fn-munodi",
+    "examId": "munodi",
+    "examTitle": "Munodi",
+    "functionName": "munodi",
+    "purpose": "Bir başlangıç sayısından Collatz/Munodi dizisini 1'e kadar üretir.",
+    "examples": [
+      {
+        "call": "munodi(3)",
+        "result": "[3,10,5,16,8,4,2,1]"
+      }
+    ],
+    "signature": "def munodi(num):",
+    "whyItMatters": "Dizinin 'doğru' hali buradan gelir; dosyadakiyle karşılaştırılır.",
+    "template": "def munodi(num):\n    c = [num]\n    while num > 1:\n        if num % 2 == {{1}}:\n            num = num // 2\n        else:\n            num = num * 3 + {{2}}\n        c.append(num)\n    return c",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "0"
+      },
+      {
+        "id": "2",
+        "answer": "1"
+      }
+    ],
+    "hint": "çift //2, tek 3n+1."
+  },
+  {
+    "id": "munodi-fn-parse_sequence",
+    "examId": "munodi",
+    "examTitle": "Munodi",
+    "functionName": "parse_sequence",
+    "purpose": "Bir satırdaki sayıları int listesine çevirir.",
+    "examples": [
+      {
+        "call": "'1 2 3'",
+        "result": "[1,2,3]"
+      }
+    ],
+    "signature": "def parse_sequence(line):",
+    "whyItMatters": "get_sequences'in satır adımı.",
+    "template": "def parse_sequence(line):\n    seq = []\n    for elem in line.split():\n        seq.append({{1}}(elem))\n    return seq",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "int"
+      }
+    ],
+    "hint": "split + int."
+  },
+  {
+    "id": "railway-management-fn-parse_stop",
+    "examId": "railway-management",
+    "examTitle": "Railway",
+    "functionName": "parse_stop",
+    "purpose": "Station:hh:min parçasını (istasyon, (saat, dakika)) yapar.",
+    "examples": [
+      {
+        "call": "'Torino:08:15'",
+        "result": "('Torino', (8, 15))"
+      }
+    ],
+    "signature": "def parse_stop(info):",
+    "whyItMatters": "Sefer veritabanının atomik birimi.",
+    "template": "def parse_stop(info):\n    train, hour, minute = info.{{1}}(':')\n    return train, (int(hour), int(minute))",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "split"
+      }
+    ],
+    "hint": "üç parçalı split(':')."
+  },
+  {
+    "id": "railway-management-fn-travel_minutes",
+    "examId": "railway-management",
+    "examTitle": "Railway",
+    "functionName": "travel_minutes",
+    "purpose": "İki saat damgası arasındaki süreyi dakikaya çevirir.",
+    "examples": [
+      {
+        "call": "(8,0)→(9,30)",
+        "result": "90"
+      }
+    ],
+    "signature": "def travel_minutes(h1, m1, h2, m2):",
+    "whyItMatters": "En kısa yolculuk karşılaştırması için.",
+    "template": "def travel_minutes(h1, m1, h2, m2):\n    return {{1}} * (h2 - h1) + (m2 - m1)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "60"
+      }
+    ],
+    "hint": "60*Δsaat + Δdk."
+  },
+  {
+    "id": "shells-fn-includes",
+    "examId": "shells",
+    "examTitle": "Sea Shells",
+    "functionName": "includes",
+    "purpose": "seqx'in multiset olarak seqy içinde olup olmadığına bakar.",
+    "examples": [
+      {
+        "call": "includes(['a','a'], ['a','a','b'])",
+        "result": "True"
+      }
+    ],
+    "signature": "def includes(seqx, seqy):",
+    "whyItMatters": "Kampanya şartının sepeti karşılayıp karşılamadığı.",
+    "template": "def includes(seqx, seqy):\n    for o in seqx:\n        if seqx.count(o) {{1}} seqy.count(o):\n            return False\n    return True",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": ">"
+      }
+    ],
+    "hint": "count x > count y → False."
+  },
+  {
+    "id": "shells-fn-sum_prices",
+    "examId": "shells",
+    "examTitle": "Sea Shells",
+    "functionName": "sum_prices",
+    "purpose": "Ödenecek ürünlerin toplam fiyatını hesaplar.",
+    "examples": [
+      {
+        "call": "iki ürün 1.5 ve 2",
+        "result": "3.5"
+      }
+    ],
+    "signature": "def sum_prices(items, shell_price):",
+    "whyItMatters": "Final price satırının kaynağı.",
+    "template": "def sum_prices(items, shell_price):\n    total = 0.0\n    for item in items:\n        total {{1}} shell_price[item]\n    return total",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "+="
+      }
+    ],
+    "hint": "+= fiyat."
+  },
+  {
+    "id": "soccer-fn-forward_eff",
+    "examId": "soccer",
+    "examTitle": "Soccer Stats",
+    "functionName": "forward_eff",
+    "purpose": "Forvet verimini (g+a-offsides)/minutes formülüyle hesaplar.",
+    "examples": [
+      {
+        "call": "g=2,a=1,o=0,m=90",
+        "result": "0.0333..."
+      }
+    ],
+    "signature": "def forward_eff(p):",
+    "whyItMatters": "Efficiencies hesaplarının ilk adımı.",
+    "template": "def forward_eff(p):\n    return (p['goals'] + p['assists'] - p['offsides']) {{1}} p['minutes']",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "/"
+      }
+    ],
+    "hint": "Toplamı dakikaya böl."
+  },
+  {
+    "id": "soccer-fn-add_to_team",
+    "examId": "soccer",
+    "examTitle": "Soccer Stats",
+    "functionName": "add_to_team",
+    "purpose": "Oyuncuyu takım sözlüğündeki listeye ekler.",
+    "examples": [
+      {
+        "call": "yeni takım",
+        "result": "teams[team]=[p]"
+      }
+    ],
+    "signature": "def add_to_team(teams, p):",
+    "whyItMatters": "Takım bazlı istatistik için gruplama.",
+    "template": "def add_to_team(teams, p):\n    if p['team'] not in teams:\n        teams[p['team']] = {{1}}()\n    teams[p['team']].append(dict(p))",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "list"
+      }
+    ],
+    "hint": "yoksa list()."
+  },
+  {
+    "id": "strawberry-fn-clean_word",
+    "examId": "strawberry",
+    "examTitle": "Strawberry Fields",
+    "functionName": "clean_word",
+    "purpose": "Kelimeden noktalamayı siler ve büyük harfe çevirir.",
+    "examples": [
+      {
+        "call": "clean_word('Hello,')",
+        "result": "'HELLO'"
+      }
+    ],
+    "signature": "def clean_word(w, punctuation):",
+    "whyItMatters": "Üçlü aramadan önce normalize et.",
+    "template": "def clean_word(w, punctuation):\n    return w.strip(punctuation).{{1}}()",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "upper"
+      }
+    ],
+    "hint": "strip + upper."
+  },
+  {
+    "id": "strawberry-fn-equal_triplet",
+    "examId": "strawberry",
+    "examTitle": "Strawberry Fields",
+    "functionName": "equal_triplet",
+    "purpose": "Üç ardışık kelimenin uzunlukları eşit mi bakar.",
+    "examples": [
+      {
+        "call": "('IS','IN','MY')",
+        "result": "True"
+      }
+    ],
+    "signature": "def equal_triplet(a, b, c):",
+    "whyItMatters": "Kayan pencerenin koşulu.",
+    "template": "def equal_triplet(a, b, c):\n    return {{1}}(a) == {{2}}(b) == {{3}}(c)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "len"
+      },
+      {
+        "id": "2",
+        "answer": "len"
+      },
+      {
+        "id": "3",
+        "answer": "len"
+      }
+    ],
+    "hint": "len eşitliği."
+  },
+  {
+    "id": "super-calculator-fn-operation",
+    "examId": "super-calculator",
+    "examTitle": "Super Calculator",
+    "functionName": "operation",
+    "purpose": "Tek bir + / - / * işlemini uygular.",
+    "examples": [
+      {
+        "call": "operation('*', 3, 4)",
+        "result": "12"
+      }
+    ],
+    "signature": "def operation(op, a, b):",
+    "whyItMatters": "evaluate_expression her adımda bunu çağırır.",
+    "template": "def operation(op, a, b):\n    if op == '+':\n        return a + b\n    if op == '-':\n        return a - b\n    if op == {{1}}:\n        return a * b",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "'*'",
+        "accept": [
+          "\"*\""
+        ]
+      }
+    ],
+    "hint": "üç dal."
+  },
+  {
+    "id": "super-calculator-fn-split_expr",
+    "examId": "super-calculator",
+    "examTitle": "Super Calculator",
+    "functionName": "split_expr",
+    "purpose": "Satırı sayılar ve operatörler diye ikiye böler.",
+    "examples": [
+      {
+        "call": "'1 2 3 : + *'",
+        "result": "nums=[1,2,3], ops=['+','*']"
+      }
+    ],
+    "signature": "def split_expr(line):",
+    "whyItMatters": "Dosya satırını değerlendirmeden önce parse.",
+    "template": "def split_expr(line):\n    part_1, part_2 = line.{{1}}(':')\n    nums = [int(t) for t in part_1.split()]\n    ops = part_2.split()\n    return nums, ops",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "split"
+      }
+    ],
+    "hint": "':' ile böl."
+  },
+  {
+    "id": "unsafe-meat-fn-in_range",
+    "examId": "unsafe-meat",
+    "examTitle": "Unsafe Meat",
+    "functionName": "in_range",
+    "purpose": "Parti numarasının kapalı aralıkta olup olmadığına bakar.",
+    "examples": [
+      {
+        "call": "in_range(5, 1, 10)",
+        "result": "True"
+      }
+    ],
+    "signature": "def in_range(batch, from_, to):",
+    "whyItMatters": "Tehlikeli parti filtresinin koşulu.",
+    "template": "def in_range(batch, from_, to):\n    return from_ {{1}} batch {{2}} to",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "<="
+      },
+      {
+        "id": "2",
+        "answer": "<="
+      }
+    ],
+    "hint": "from_ <= batch <= to."
+  },
+  {
+    "id": "unsafe-meat-fn-parse_range",
+    "examId": "unsafe-meat",
+    "examTitle": "Unsafe Meat",
+    "functionName": "parse_range",
+    "purpose": "'10-20' metnini (10, 20) tuple'ına çevirir.",
+    "examples": [
+      {
+        "call": "parse_range('3-7')",
+        "result": "(3, 7)"
+      }
+    ],
+    "signature": "def parse_range(block):",
+    "whyItMatters": "report aralık bloğunun parse'ı.",
+    "template": "def parse_range(block):\n    from_, to = block.strip().{{1}}('-')\n    return int(from_), int(to)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "split"
+      }
+    ],
+    "hint": "split('-')."
+  },
+  {
+    "id": "wobbletron3k-fn-is_monotonic",
+    "examId": "wobbletron3k",
+    "examTitle": "Wobbletron 3000",
+    "functionName": "is_monotonic",
+    "purpose": "Liste sıkı artan veya sıkı azalan mı (sorted ile) kontrol eder.",
+    "examples": [
+      {
+        "call": "[1,2,3]",
+        "result": "True"
+      },
+      {
+        "call": "[1,3,2]",
+        "result": "False"
+      }
+    ],
+    "signature": "def is_monotonic(report):",
+    "whyItMatters": "Güvenlik kontrolünün ilk kapısı.",
+    "template": "def is_monotonic(report):\n    return report == sorted(report) or report == sorted(report, reverse={{1}})",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "True"
+      }
+    ],
+    "hint": "artan veya azalan."
+  },
+  {
+    "id": "wobbletron3k-fn-gaps_ok",
+    "examId": "wobbletron3k",
+    "examTitle": "Wobbletron 3000",
+    "functionName": "gaps_ok",
+    "purpose": "Komşu eleman farklarının 1..3 aralığında olup olmadığına bakar.",
+    "examples": [
+      {
+        "call": "[1,3,6]",
+        "result": "True"
+      }
+    ],
+    "signature": "def gaps_ok(report):",
+    "whyItMatters": "Monoton geçtikten sonraki ikinci kural.",
+    "template": "def gaps_ok(report):\n    for e1, e2 in zip(report, report[1:]):\n        if abs(e1 - e2) < 1 or abs(e1 - e2) > {{1}}:\n            return False\n    return True",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "3"
+      }
+    ],
+    "hint": "abs fark ≤ 3."
+  },
+  {
+    "id": "worms-fn-find_all",
+    "examId": "worms",
+    "examTitle": "Worms of Words",
+    "functionName": "find_all",
+    "purpose": "Bir kelimenin dizideki tüm indekslerini listeler.",
+    "examples": [
+      {
+        "call": "find_all('a', ['a','b','a'])",
+        "result": "[0, 2]"
+      }
+    ],
+    "signature": "def find_all(word, sequence):",
+    "whyItMatters": "Mesafe hesabından önce konumları topla.",
+    "template": "def find_all(word, sequence):\n    indexes = []\n    for i, w in enumerate(sequence):\n        if w == word:\n            indexes.{{1}}(i)\n    return indexes",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "append"
+      }
+    ],
+    "hint": "enumerate + append."
+  },
+  {
+    "id": "worms-fn-min_distance",
+    "examId": "worms",
+    "examTitle": "Worms of Words",
+    "functionName": "min_distance",
+    "purpose": "İki indeks arasındaki mutlak mesafeyi hesaplar.",
+    "examples": [
+      {
+        "call": "min_distance(2, 5)",
+        "result": "3"
+      }
+    ],
+    "signature": "def min_distance(p0, p1):",
+    "whyItMatters": "En yakın birlikte geçişi ölçmek için.",
+    "template": "def min_distance(p0, p1):\n    return {{1}}(p0 - p1)",
+    "blanks": [
+      {
+        "id": "1",
+        "answer": "abs"
+      }
+    ],
+    "hint": "abs(p0-p1)."
+  }
+]
+
+export function localizeFunctionDrill(
+  drill: FunctionDrill,
+  lang: Lang,
+): FunctionDrill {
+  if (lang !== 'en') return drill
+  const copy = functionDrillsEn[drill.id]
+  if (!copy) return drill
+  return {
+    ...drill,
+    purpose: copy.purpose,
+    whyItMatters: copy.whyItMatters,
+    hint: copy.hint,
+    examples: copy.examples,
+  }
+}
+
+export function getFunctionDrillsForExam(
+  examId: string,
+  lang: Lang = 'tr',
+): FunctionDrill[] {
+  return functionDrills
+    .filter((d) => d.examId === examId)
+    .map((d) => localizeFunctionDrill(d, lang))
+}
+
+export function getAllFunctionDrills(lang: Lang = 'tr'): FunctionDrill[] {
+  return functionDrills.map((d) => localizeFunctionDrill(d, lang))
+}

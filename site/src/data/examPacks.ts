@@ -903,10 +903,16 @@ export const examPacks: ExamPack[] = [
   }
 ]
 
-export function getExamPack(examId: string): ExamPack | undefined {
-  return examPacks.find((p) => p.examId === examId)
+import { examPacksEn } from './examPacks.en'
+import type { Lang } from '../i18n/types'
+
+export function getExamPack(
+  examId: string,
+  lang: Lang = 'tr',
+): ExamPack | undefined {
+  return getAllExamPacks(lang).find((p) => p.examId === examId)
 }
 
-export function getAllExamPacks(): ExamPack[] {
-  return examPacks
+export function getAllExamPacks(lang: Lang = 'tr'): ExamPack[] {
+  return lang === 'en' ? examPacksEn : examPacks
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Lesson, LessonBlock, QuizItem } from '../types'
 import { checkQuizItem } from '../lib/checkQuiz'
+import { useLanguage } from '../i18n/LanguageContext'
 
 type LessonViewProps = {
   lesson: Lesson
@@ -23,6 +24,7 @@ export function LessonView({
   onNext,
   hasNext,
 }: LessonViewProps) {
+  const { t } = useLanguage()
   const [phase, setPhase] = useState<Phase>('learn')
   const [quizIndex, setQuizIndex] = useState(0)
   const [selected, setSelected] = useState<number | null>(null)
@@ -70,16 +72,21 @@ export function LessonView({
     resetQuizState()
   }
 
+  const phaseLabel =
+    phase === 'learn'
+      ? t.phaseLearn
+      : phase === 'quiz'
+        ? t.phaseQuiz
+        : t.phaseDone
+
   return (
     <section className="lesson">
       <header className="exercise-top">
         <button type="button" className="btn-ghost" onClick={onBack}>
-          ← Ana sayfa
+          {t.backHome}
         </button>
-        <div className="progress" aria-label="Ders ilerlemesi">
-          <span>
-            Ders {index + 1} / {total}
-          </span>
+        <div className="progress" aria-label={t.lessonProgressAria}>
+          <span>{t.lessonProgress(index + 1, total)}</span>
           <div className="progress-track">
             <div
               className="progress-fill"
@@ -90,10 +97,8 @@ export function LessonView({
       </header>
 
       <div className="exercise-meta">
-        <span className="pill">Sıfırdan</span>
-        <span className="pill muted">
-          {phase === 'learn' ? 'Anlatım' : phase === 'quiz' ? 'Soru' : 'Tamam'}
-        </span>
+        <span className="pill">{t.pillBasics}</span>
+        <span className="pill muted">{phaseLabel}</span>
       </div>
 
       <h2 className="exercise-title">{lesson.title}</h2>
@@ -108,7 +113,7 @@ export function LessonView({
           </div>
           <div className="actions">
             <button type="button" className="btn-primary" onClick={goQuiz}>
-              Anladım, sorulara geç
+              {t.goToQuiz}
             </button>
           </div>
         </>
@@ -141,7 +146,7 @@ export function LessonView({
       {phase === 'done' && (
         <div className="lesson-done">
           <p className="feedback feedback-ok" role="status">
-            Bu dersi bitirdin. Temeli yazarak pekiştirdin.
+            {t.lessonDoneMsg}
           </p>
           <div className="actions">
             {hasNext ? (
@@ -150,11 +155,11 @@ export function LessonView({
                 className="btn-primary"
                 onClick={() => onNext(lesson.id)}
               >
-                Sonraki ders →
+                {t.nextLesson}
               </button>
             ) : (
               <button type="button" className="btn-primary" onClick={onBack}>
-                Ana sayfaya dön
+                {t.backToHome}
               </button>
             )}
             <button
@@ -165,7 +170,7 @@ export function LessonView({
                 resetQuizState()
               }}
             >
-              Dersi tekrar oku
+              {t.rereadLesson}
             </button>
           </div>
         </div>
@@ -225,14 +230,13 @@ function QuizCard({
   onCheck,
   onContinue,
 }: QuizCardProps) {
+  const { t } = useLanguage()
   const canCheck =
     item.type === 'mcq' ? selected !== null : fillValue.trim().length > 0
 
   return (
     <div className="quiz-card">
-      <p className="quiz-step">
-        Soru {step + 1} / {total}
-      </p>
+      <p className="quiz-step">{t.questionStep(step + 1, total)}</p>
       <h3 className="quiz-question">{item.question}</h3>
 
       {item.type === 'mcq' ? (
@@ -258,11 +262,11 @@ function QuizCard({
         </ul>
       ) : (
         <label className="quiz-fill">
-          <span className="sr-only">Cevabın</span>
+          <span className="sr-only">{t.yourAnswer}</span>
           <input
             value={fillValue}
             onChange={(e) => feedback !== 'ok' && onFill(e.target.value)}
-            placeholder={item.placeholder ?? 'Cevabını yaz'}
+            placeholder={item.placeholder ?? t.writeAnswer}
             disabled={feedback === 'ok'}
             spellCheck={false}
             autoComplete="off"
@@ -279,28 +283,26 @@ function QuizCard({
             onClick={onCheck}
             disabled={!canCheck}
           >
-            Kontrol et
+            {t.check}
           </button>
         ) : (
           <button type="button" className="btn-primary" onClick={onContinue}>
-            {step >= total - 1 ? 'Dersi bitir' : 'Sonraki soru'}
+            {step >= total - 1 ? t.finishLesson : t.nextQuestion}
           </button>
         )}
       </div>
 
       {feedback === 'wrong' && (
         <p className="feedback feedback-wrong" role="status">
-          Henüz değil — açıklamayı oku ve tekrar dene.
+          {t.quizWrong}
         </p>
       )}
       {feedback === 'ok' && (
         <p className="feedback feedback-ok" role="status">
-          Doğru.
+          {t.correct}
         </p>
       )}
-      {showExplain && (
-        <p className="hint">{item.explanation}</p>
-      )}
+      {showExplain && <p className="hint">{item.explanation}</p>}
     </div>
   )
 }

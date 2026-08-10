@@ -1,3 +1,5 @@
+import { useLanguage } from '../i18n/LanguageContext'
+
 type HomeProps = {
   lessonCount: number
   examCount: number
@@ -6,6 +8,7 @@ type HomeProps = {
   questionsDone: number
   onStartBasics: () => void
   onStartExamPrep: () => void
+  onStartPlayground: () => void
 }
 
 export function Home({
@@ -16,36 +19,44 @@ export function Home({
   questionsDone,
   onStartBasics,
   onStartExamPrep,
+  onStartPlayground,
 }: HomeProps) {
+  const { t } = useLanguage()
+
   return (
     <section className="home">
-      <p className="eyebrow">Python sınav atölyesi</p>
+      <p className="eyebrow">{t.homeEyebrow}</p>
       <h1 className="brand">KodAtölye</h1>
-      <p className="lede">
-        Önce temeli öğren, sonra bir exam seçip özet + sorularla çalış.
-      </p>
+      <p className="lede">{t.homeLede}</p>
 
       <div className="path-grid">
         <button type="button" className="path-card" onClick={onStartBasics}>
-          <span className="path-kicker">1 · Başlangıç</span>
-          <span className="path-title">Sıfırdan Python</span>
-          <span className="path-desc">
-            print’ten def’e kadar tek tek anlatım, her dersin sonunda soru.
-          </span>
+          <span className="path-kicker">{t.path1Kicker}</span>
+          <span className="path-title">{t.path1Title}</span>
+          <span className="path-desc">{t.path1Desc}</span>
           <span className="path-meta">
-            {lessonsDone}/{lessonCount} ders bitti
+            {t.path1Meta(lessonsDone, lessonCount)}
           </span>
         </button>
 
         <button type="button" className="path-card" onClick={onStartExamPrep}>
-          <span className="path-kicker">2 · Sınav</span>
-          <span className="path-title">Sınava çalış</span>
-          <span className="path-desc">
-            Exam seç → ne yapacağını oku → çoktan seçmeli + boşluk soruları.
-          </span>
+          <span className="path-kicker">{t.path2Kicker}</span>
+          <span className="path-title">{t.path2Title}</span>
+          <span className="path-desc">{t.path2Desc}</span>
           <span className="path-meta">
-            {examCount} exam · {questionsDone}/{questionCount} soru
+            {t.path2Meta(examCount, questionsDone, questionCount)}
           </span>
+        </button>
+
+        <button
+          type="button"
+          className="path-card path-card--wide"
+          onClick={onStartPlayground}
+        >
+          <span className="path-kicker">{t.path3Kicker}</span>
+          <span className="path-title">{t.path3Title}</span>
+          <span className="path-desc">{t.path3Desc}</span>
+          <span className="path-meta">{t.path3Meta}</span>
         </button>
       </div>
     </section>

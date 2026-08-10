@@ -75,7 +75,31 @@ export type ExamPack = {
   mcqs: ExamMcq[]
 }
 
+export type FunctionExample = {
+  call: string
+  result: string
+}
+
+export type FunctionDrill = {
+  id: string
+  examId: string
+  examTitle: string
+  functionName: string
+  purpose: string
+  examples: FunctionExample[]
+  signature: string
+  whyItMatters: string
+  template: string
+  blanks: {
+    id: BlankId
+    answer: string
+    accept?: string[]
+  }[]
+  hint: string
+}
+
 /** Unified item in an exam study session */
 export type ExamSessionItem =
   | { kind: 'mcq'; data: ExamMcq }
+  | { kind: 'function'; data: FunctionDrill }
   | { kind: 'blank'; data: Exercise }
