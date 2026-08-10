@@ -151,11 +151,14 @@ export default function App() {
           <LessonView
             key={`${currentLesson.id}-${lang}`}
             lesson={currentLesson}
+            lessons={lessonList}
             index={Math.max(0, lessonIndex)}
             total={lessonList.length}
+            doneLessonIds={doneLessons}
             onBack={() => setScreen('home')}
             onCompleted={completeLesson}
             onNext={goNextLesson}
+            onJump={setCurrentLessonId}
             hasNext={Boolean(nextLesson)}
           />
         )}

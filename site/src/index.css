@@ -461,6 +461,46 @@ input {
   animation: rise 0.45s ease both;
 }
 
+.lesson-jump {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin: 0 0 1.1rem;
+}
+
+.lesson-jump-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.lesson-jump-select {
+  width: 100%;
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 0.7rem 2.4rem 0.7rem 0.9rem;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--ink-soft) 50%)
+      calc(100% - 1.15rem) calc(50% - 0.2rem) / 0.4rem 0.4rem no-repeat,
+    linear-gradient(135deg, var(--ink-soft) 50%, transparent 50%)
+      calc(100% - 0.85rem) calc(50% - 0.2rem) / 0.4rem 0.4rem no-repeat,
+    color-mix(in srgb, white 86%, transparent);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease;
+}
+
+.lesson-jump-select:hover,
+.lesson-jump-select:focus {
+  border-color: var(--teal);
+  outline: none;
+}
+
 .lesson-body {
   display: flex;
   flex-direction: column;

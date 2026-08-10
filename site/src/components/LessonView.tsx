@@ -5,11 +5,14 @@ import { useLanguage } from '../i18n/LanguageContext'
 
 type LessonViewProps = {
   lesson: Lesson
+  lessons: Lesson[]
   index: number
   total: number
+  doneLessonIds: string[]
   onBack: () => void
   onCompleted: (lessonId: string) => void
   onNext: (lessonId: string) => void
+  onJump: (lessonId: string) => void
   hasNext: boolean
 }
 
@@ -17,11 +20,14 @@ type Phase = 'learn' | 'quiz' | 'done'
 
 export function LessonView({
   lesson,
+  lessons,
   index,
   total,
+  doneLessonIds,
   onBack,
   onCompleted,
   onNext,
+  onJump,
   hasNext,
 }: LessonViewProps) {
   const { t } = useLanguage()
@@ -100,6 +106,29 @@ export function LessonView({
         <span className="pill">{t.pillBasics}</span>
         <span className="pill muted">{phaseLabel}</span>
       </div>
+
+      <label className="lesson-jump">
+        <span className="lesson-jump-label">{t.jumpLesson}</span>
+        <select
+          className="lesson-jump-select"
+          value={lesson.id}
+          aria-label={t.jumpLessonAria}
+          onChange={(e) => {
+            const id = e.target.value
+            if (id !== lesson.id) onJump(id)
+          }}
+        >
+          {lessons.map((item, i) => {
+            const done = doneLessonIds.includes(item.id)
+            return (
+              <option key={item.id} value={item.id}>
+                {i + 1}. {item.title}
+                {done ? ` · ${t.lessonDone}` : ''}
+              </option>
+            )
+          })}
+        </select>
+      </label>
 
       <h2 className="exercise-title">{lesson.title}</h2>
       <p className="exercise-goal">{lesson.subtitle}</p>
