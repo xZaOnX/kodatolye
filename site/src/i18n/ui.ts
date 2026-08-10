@@ -69,7 +69,8 @@ const ui = {
     nextQuestionArrow: 'Sonraki soru →',
     nextArrow: 'Sonraki →',
     finish: 'Bitir',
-    quizWrong: 'Henüz değil — açıklamayı oku ve tekrar dene.',
+    quizWrong: 'Henüz değil — tekrar dene.',
+    showAnswer: 'Cevabı gör',
     correct: 'Doğru.',
     examPickerTitle: 'Sınava çalış',
     examPickerGoal:
@@ -177,7 +178,8 @@ const ui = {
     nextQuestionArrow: 'Next question →',
     nextArrow: 'Next →',
     finish: 'Finish',
-    quizWrong: 'Not yet — read the explanation and try again.',
+    quizWrong: 'Not yet — try again.',
+    showAnswer: 'Show answer',
     correct: 'Correct.',
     examPickerTitle: 'Study for the exam',
     examPickerGoal:

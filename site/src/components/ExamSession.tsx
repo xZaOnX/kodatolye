@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { ExamSessionItem } from '../types'
 import { checkAnswers } from '../lib/checkAnswers'
+import { SHOW_ANSWER_AFTER_WRONG } from '../lib/showAnswer'
 import { useLanguage } from '../i18n/LanguageContext'
 import { BlankCode } from './BlankCode'
 import { FunctionDrillStep } from './FunctionDrillStep'
@@ -127,6 +128,7 @@ function McqStep({
   const { t } = useLanguage()
   const [selected, setSelected] = useState<number | null>(null)
   const [status, setStatus] = useState<'idle' | 'wrong' | 'ok'>('idle')
+  const [wrongAttempts, setWrongAttempts] = useState(0)
 
   function check() {
     if (selected === null) return
@@ -135,7 +137,14 @@ function McqStep({
       onSolved()
     } else {
       setStatus('wrong')
+      setWrongAttempts((n) => n + 1)
     }
+  }
+
+  function showAnswer() {
+    setSelected(correctIndex)
+    setStatus('ok')
+    onSolved()
   }
 
   return (
@@ -163,14 +172,21 @@ function McqStep({
 
       <div className="actions">
         {status !== 'ok' ? (
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={check}
-            disabled={selected === null}
-          >
-            {t.check}
-          </button>
+          <>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={check}
+              disabled={selected === null}
+            >
+              {t.check}
+            </button>
+            {wrongAttempts >= SHOW_ANSWER_AFTER_WRONG && (
+              <button type="button" className="btn-ghost" onClick={showAnswer}>
+                {t.showAnswer}
+              </button>
+            )}
+          </>
         ) : (
           <button type="button" className="btn-primary" onClick={onContinue}>
             {isLast ? t.finish : t.nextQuestionArrow}
@@ -191,7 +207,6 @@ function McqStep({
           <p className="hint">{explanation}</p>
         </>
       )}
-      {status === 'wrong' && <p className="hint">{explanation}</p>}
     </div>
   )
 }
@@ -222,6 +237,7 @@ function BlankStep({
   const [wrong, setWrong] = useState<string[]>([])
   const [status, setStatus] = useState<'idle' | 'wrong' | 'ok'>('idle')
   const [showHint, setShowHint] = useState(false)
+  const [wrongAttempts, setWrongAttempts] = useState(0)
 
   function handleCheck() {
     const result = checkAnswers(
@@ -245,7 +261,19 @@ function BlankStep({
     } else {
       setWrong(result.wrong)
       setStatus('wrong')
+      setWrongAttempts((n) => n + 1)
     }
+  }
+
+  function showAnswer() {
+    const filled: Record<string, string> = {}
+    for (const blank of blanks) {
+      filled[blank.id] = blank.answer
+    }
+    setValues(filled)
+    setWrong([])
+    setStatus('ok')
+    onSolved()
   }
 
   return (
@@ -267,9 +295,16 @@ function BlankStep({
       />
       <div className="actions">
         {status !== 'ok' ? (
-          <button type="button" className="btn-primary" onClick={handleCheck}>
-            {t.check}
-          </button>
+          <>
+            <button type="button" className="btn-primary" onClick={handleCheck}>
+              {t.check}
+            </button>
+            {wrongAttempts >= SHOW_ANSWER_AFTER_WRONG && (
+              <button type="button" className="btn-ghost" onClick={showAnswer}>
+                {t.showAnswer}
+              </button>
+            )}
+          </>
         ) : (
           <button type="button" className="btn-primary" onClick={onContinue}>
             {isLast ? t.finish : t.nextQuestionArrow}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { FunctionDrill } from '../types'
 import { checkAnswers } from '../lib/checkAnswers'
+import { SHOW_ANSWER_AFTER_WRONG } from '../lib/showAnswer'
 import { BlankCode } from './BlankCode'
 import { useLanguage } from '../i18n/LanguageContext'
 
@@ -23,6 +24,7 @@ export function FunctionDrillStep({
   const [wrong, setWrong] = useState<string[]>([])
   const [status, setStatus] = useState<'idle' | 'wrong' | 'ok'>('idle')
   const [showHint, setShowHint] = useState(false)
+  const [wrongAttempts, setWrongAttempts] = useState(0)
 
   function handleCheck() {
     const result = checkAnswers(
@@ -46,7 +48,19 @@ export function FunctionDrillStep({
     } else {
       setWrong(result.wrong)
       setStatus('wrong')
+      setWrongAttempts((n) => n + 1)
     }
+  }
+
+  function showAnswer() {
+    const filled: Record<string, string> = {}
+    for (const blank of drill.blanks) {
+      filled[blank.id] = blank.answer
+    }
+    setValues(filled)
+    setWrong([])
+    setStatus('ok')
+    onSolved()
   }
 
   if (phase === 'teach') {
@@ -119,9 +133,16 @@ export function FunctionDrillStep({
 
       <div className="actions">
         {status !== 'ok' ? (
-          <button type="button" className="btn-primary" onClick={handleCheck}>
-            {t.check}
-          </button>
+          <>
+            <button type="button" className="btn-primary" onClick={handleCheck}>
+              {t.check}
+            </button>
+            {wrongAttempts >= SHOW_ANSWER_AFTER_WRONG && (
+              <button type="button" className="btn-ghost" onClick={showAnswer}>
+                {t.showAnswer}
+              </button>
+            )}
+          </>
         ) : (
           <button type="button" className="btn-primary" onClick={onContinue}>
             {isLast ? t.finish : t.nextArrow}

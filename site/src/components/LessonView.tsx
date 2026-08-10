@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Lesson, LessonBlock, QuizItem } from '../types'
 import { checkQuizItem } from '../lib/checkQuiz'
+import { SHOW_ANSWER_AFTER_WRONG } from '../lib/showAnswer'
 import { useLanguage } from '../i18n/LanguageContext'
 
 type LessonViewProps = {
@@ -37,6 +38,7 @@ export function LessonView({
   const [fillValue, setFillValue] = useState('')
   const [feedback, setFeedback] = useState<'idle' | 'wrong' | 'ok'>('idle')
   const [showExplain, setShowExplain] = useState(false)
+  const [wrongAttempts, setWrongAttempts] = useState(0)
 
   const quizItem = lesson.quiz[quizIndex]
 
@@ -45,6 +47,7 @@ export function LessonView({
     setFillValue('')
     setFeedback('idle')
     setShowExplain(false)
+    setWrongAttempts(0)
   }
 
   function goQuiz() {
@@ -62,8 +65,19 @@ export function LessonView({
       setShowExplain(true)
     } else {
       setFeedback('wrong')
-      setShowExplain(true)
+      setWrongAttempts((n) => n + 1)
     }
+  }
+
+  function handleShowAnswer() {
+    if (!quizItem) return
+    if (quizItem.type === 'mcq') {
+      setSelected(quizItem.correctIndex)
+    } else {
+      setFillValue(quizItem.answer)
+    }
+    setFeedback('ok')
+    setShowExplain(true)
   }
 
   function handleContinue() {
@@ -157,17 +171,17 @@ export function LessonView({
           fillValue={fillValue}
           feedback={feedback}
           showExplain={showExplain}
+          canShowAnswer={wrongAttempts >= SHOW_ANSWER_AFTER_WRONG}
           onSelect={(i) => {
             setSelected(i)
             setFeedback('idle')
-            setShowExplain(false)
           }}
           onFill={(v) => {
             setFillValue(v)
             setFeedback('idle')
-            setShowExplain(false)
           }}
           onCheck={handleCheck}
+          onShowAnswer={handleShowAnswer}
           onContinue={handleContinue}
         />
       )}
@@ -240,9 +254,11 @@ type QuizCardProps = {
   fillValue: string
   feedback: 'idle' | 'wrong' | 'ok'
   showExplain: boolean
+  canShowAnswer: boolean
   onSelect: (i: number) => void
   onFill: (v: string) => void
   onCheck: () => void
+  onShowAnswer: () => void
   onContinue: () => void
 }
 
@@ -254,9 +270,11 @@ function QuizCard({
   fillValue,
   feedback,
   showExplain,
+  canShowAnswer,
   onSelect,
   onFill,
   onCheck,
+  onShowAnswer,
   onContinue,
 }: QuizCardProps) {
   const { t } = useLanguage()
@@ -306,14 +324,25 @@ function QuizCard({
 
       <div className="actions">
         {feedback !== 'ok' ? (
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={onCheck}
-            disabled={!canCheck}
-          >
-            {t.check}
-          </button>
+          <>
+            <button
+              type="button"
+              className="btn-primary"
+              onClick={onCheck}
+              disabled={!canCheck}
+            >
+              {t.check}
+            </button>
+            {canShowAnswer && (
+              <button
+                type="button"
+                className="btn-ghost"
+                onClick={onShowAnswer}
+              >
+                {t.showAnswer}
+              </button>
+            )}
+          </>
         ) : (
           <button type="button" className="btn-primary" onClick={onContinue}>
             {step >= total - 1 ? t.finishLesson : t.nextQuestion}
